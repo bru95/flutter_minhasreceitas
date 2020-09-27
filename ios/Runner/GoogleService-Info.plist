@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>965442649844-v0rb4o148phuagk95q56fe1i7ehn25o8.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.965442649844-v0rb4o148phuagk95q56fe1i7ehn25o8</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCM_xJxRloH6u-RGwNrzbSDQa2q5pPrNSo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>965442649844</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>br.com.minhasreceitas</string>
+	<key>PROJECT_ID</key>
+	<string>minhas-receitas---flutter</string>
+	<key>STORAGE_BUCKET</key>
+	<string>minhas-receitas---flutter.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:965442649844:ios:1eb8906c1ddd50a2c7a8a1</string>
+	<key>DATABASE_URL</key>
+	<string>https://minhas-receitas---flutter.firebaseio.com</string>
+</dict>
+</plist>

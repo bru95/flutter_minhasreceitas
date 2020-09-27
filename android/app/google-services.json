@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "965442649844",
+    "firebase_url": "https://minhas-receitas---flutter.firebaseio.com",
+    "project_id": "minhas-receitas---flutter",
+    "storage_bucket": "minhas-receitas---flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965442649844:android:c2cec349cdfd7911c7a8a1",
+        "android_client_info": {
+          "package_name": "br.com.minhasreceitas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965442649844-s0f6ssv3m0vb7lrmba212n8bsoqh0i04.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWeds-EpwYz_jm0BU-apqnZjmhMlsAhbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965442649844-s0f6ssv3m0vb7lrmba212n8bsoqh0i04.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "965442649844-v0rb4o148phuagk95q56fe1i7ehn25o8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "br.com.minhasreceitas"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
