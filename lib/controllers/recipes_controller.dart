@@ -3,6 +3,7 @@ import 'package:minhasreceitas/model/recipe.dart';
 import 'package:minhasreceitas/service_locator.dart';
 import 'package:minhasreceitas/services/firebase_service.dart';
 import 'package:mobx/mobx.dart';
+import 'package:social_share/social_share.dart';
 
 part 'recipes_controller.g.dart';
 
@@ -33,5 +34,19 @@ abstract class RecipesControllerBase with Store {
         .then((_) {
       print("success");
     });
+  }
+
+  void share(int index) {
+    Recipe recipeShare = recipes[index];
+    String ingredients = recipeShare.ingredients.reduce((value, element) => value + ', ' + element);
+
+    SocialShare.shareWhatsapp(
+        "Minha Receita: ${recipeShare.name} \n"
+            + "Ingredientes: \n ${ingredients}"
+        + "Modo de preparo: \n ${recipeShare.preparation}");
+
+    print("Minha Receita: ${recipeShare.name} \n"
+        + "Ingredientes: \n ${ingredients} \n"
+        + "Modo de preparo: \n ${recipeShare.preparation}");
   }
 }

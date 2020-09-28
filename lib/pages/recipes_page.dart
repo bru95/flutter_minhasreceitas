@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:minhasreceitas/controllers/recipes_controller.dart';
 import 'package:minhasreceitas/model/recipe.dart';
 import 'package:minhasreceitas/pages/new_recipe_page.dart';
-import 'package:minhasreceitas/widgets/platform_widget.dart';
 
 class Recipes extends StatefulWidget {
   static const String title = 'Minhas Receitas';
@@ -70,6 +70,15 @@ class _RecipesState extends State<Recipes> {
   }
 
   Widget _listBuilder(BuildContext context, int index) {
+    IconData iconFav = PlatformIcons(context).favoriteOutline;
+    String textFav = "Favoritar";
+
+    if (controller.recipes[index].favorite != null &&
+        controller.recipes[index].favorite) {
+      iconFav = PlatformIcons(context).favoriteSolid;
+      textFav = "Desfavoritar";
+    }
+
     return SafeArea(
       top: false,
       bottom: false,
@@ -77,51 +86,57 @@ class _RecipesState extends State<Recipes> {
         onTap: () {
           _openEditRecipe(controller.recipes[index]);
         },
-        child: Card(
-          elevation: 1.5,
-          margin: EdgeInsets.fromLTRB(6, 0, 6, 0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                PlatformIconButton(
-                  icon: controller.recipes[index].favorite != null &&
-                          controller.recipes[index].favorite
-                      ? Icon(
-                          PlatformIcons(context).favoriteSolid,
-                          color: Color(0xFFB22222),
-                        )
-                      : Icon(
-                          PlatformIcons(context).favoriteOutline,
-                          color: Color(0xFFB22222),
-                        ),
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    controller.favorite(index);
-                  },
-                ),
-                Padding(padding: EdgeInsets.only(left: 16)),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Observer(
-                      builder: (_) => Text(
-                        controller.recipes[index].name,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+        child: Slidable(
+          actionPane: SlidableDrawerActionPane(),
+          actionExtentRatio: 0.25,
+          actions: <Widget>[
+            IconSlideAction(
+              caption: 'Compartilhar',
+              color: Colors.greenAccent,
+              icon: PlatformIcons(context).share,
+              onTap: () => controller.share(index),
+            ),
+            IconSlideAction(
+              caption: textFav,
+              color: Colors.red,
+              icon: iconFav,
+              onTap: () => controller.favorite(index),
+            ),
+          ],
+          child: Card(
+            elevation: 1.5,
+            margin: EdgeInsets.fromLTRB(6, 0, 6, 0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    PlatformIcons(context).book,
+                    color: Colors.grey,
+                  ),
+                  Padding(padding: EdgeInsets.only(left: 16)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Observer(
+                        builder: (_) => Text(
+                          controller.recipes[index].name,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(padding: EdgeInsets.only(top: 8)),
-                  ],
-                ),
-              ],
+                      Padding(padding: EdgeInsets.only(top: 8)),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
