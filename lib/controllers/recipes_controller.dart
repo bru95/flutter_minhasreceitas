@@ -41,12 +41,8 @@ abstract class RecipesControllerBase with Store {
     String ingredients = recipeShare.ingredients.reduce((value, element) => value + ', ' + element);
 
     SocialShare.shareWhatsapp(
-        "Minha Receita: ${recipeShare.name} \n"
-            + "Ingredientes: \n ${ingredients}"
-        + "Modo de preparo: \n ${recipeShare.preparation}");
-
-    print("Minha Receita: ${recipeShare.name} \n"
-        + "Ingredientes: \n ${ingredients} \n"
-        + "Modo de preparo: \n ${recipeShare.preparation}");
+        "Minha Receita: *${recipeShare.name}* \n"
+            + "_Ingredientes:_ \n ${ingredients} \n"
+        + "_Modo de preparo:_ \n ${recipeShare.preparation}");
   }
 }
