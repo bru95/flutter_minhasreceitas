@@ -1,43 +1,20 @@
-/*import 'package:mobx/mobx.dart';
-part 'recipe.g.dart';
-
-class Recipe = _RecipeBase with _$Recipe;
-
-abstract class _RecipeBase with Store {
-
-  @observable
-  String name = '';
-
-  @action
-  changeName(String newName) => name = newName;
-
-  @observable
-  String preparation = '';
-
-  @action
-  changePreparation(String newPreparation) => preparation = newPreparation;
-
-  @observable
-  var ingredients = ObservableList<String>();
-
-  @action
-  addIngredient(String ingredient) {
-    ingredients.insert(0, ingredient);
-  }
-
-}*/
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:minhasreceitas/model/base_model.dart';
+import 'package:minhasreceitas/service_locator.dart';
+import 'package:minhasreceitas/services/localstorage_service.dart';
 
 class Recipe extends BaseModel{
   String _documentId;
+  String _userId;
   String name;
   String preparation;
   bool favorite = false;
   List<String> ingredients = new List<String>();
 
-  Recipe({this.name, this.preparation, this.ingredients});
+  Recipe({this.name, this.preparation, this.ingredients}){
+    var sharedPreferences = locator<LocalStorageService>();
+    this._userId = sharedPreferences.usrLogged;
+  }
 
   Recipe.fromfirestoresnapshot(DocumentSnapshot document) {
     _documentId = document.id;
@@ -47,6 +24,7 @@ class Recipe extends BaseModel{
     this.preparation = map["preparation"] ?? false;
     this.ingredients = List.from(map["ingredients"]);
     this.favorite = map["favorite"];
+    this._userId = map["userId"];
   }
 
   @override
@@ -56,6 +34,7 @@ class Recipe extends BaseModel{
     map['preparation'] = this.preparation;
     map['ingredients'] = this.ingredients;
     map['favorite'] = this.favorite;
+    map['userId'] = this._userId;
     return map;
   }
 
@@ -72,6 +51,6 @@ class Recipe extends BaseModel{
 
   bool get getFavorite => favorite;
 
-  set setfavorite(bool value) => favorite = value;
+  set setFavorite(bool value) => favorite = value;
 }
 

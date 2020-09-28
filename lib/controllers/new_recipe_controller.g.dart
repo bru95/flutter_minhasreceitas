@@ -21,6 +21,11 @@ mixin _$NewRecipeController on NewRecipeControllerBase, Store {
   List<String> get ingredients => (_$ingredientsComputed ??=
           Computed<List<String>>(() => super.ingredients))
       .value;
+  Computed<Recipe> _$recipeComputed;
+
+  @override
+  Recipe get recipe =>
+      (_$recipeComputed ??= Computed<Recipe>(() => super.recipe)).value;
 
   final _$_recipeAtom = Atom(name: 'NewRecipeControllerBase._recipe');
 
@@ -57,6 +62,23 @@ mixin _$NewRecipeController on NewRecipeControllerBase, Store {
     }, _$auxNewIngredientAtom, name: '${_$auxNewIngredientAtom.name}_set');
   }
 
+  final _$successAtom = Atom(name: 'NewRecipeControllerBase.success');
+
+  @override
+  bool get success {
+    _$successAtom.context.enforceReadPolicy(_$successAtom);
+    _$successAtom.reportObserved();
+    return super.success;
+  }
+
+  @override
+  set success(bool value) {
+    _$successAtom.context.conditionallyRunInAction(() {
+      super.success = value;
+      _$successAtom.reportChanged();
+    }, _$successAtom, name: '${_$successAtom.name}_set');
+  }
+
   final _$errorStateAtom = Atom(name: 'NewRecipeControllerBase.errorState');
 
   @override
@@ -79,6 +101,13 @@ mixin _$NewRecipeController on NewRecipeControllerBase, Store {
   @override
   Future addRecipe() {
     return _$addRecipeAsyncAction.run(() => super.addRecipe());
+  }
+
+  final _$deleteRecipeAsyncAction = AsyncAction('deleteRecipe');
+
+  @override
+  Future deleteRecipe() {
+    return _$deleteRecipeAsyncAction.run(() => super.deleteRecipe());
   }
 
   final _$NewRecipeControllerBaseActionController =
@@ -123,6 +152,17 @@ mixin _$NewRecipeController on NewRecipeControllerBase, Store {
         _$NewRecipeControllerBaseActionController.startAction();
     try {
       return super.removeIngredient(index);
+    } finally {
+      _$NewRecipeControllerBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  dynamic setRecipe(Recipe recipe) {
+    final _$actionInfo =
+        _$NewRecipeControllerBaseActionController.startAction();
+    try {
+      return super.setRecipe(recipe);
     } finally {
       _$NewRecipeControllerBaseActionController.endAction(_$actionInfo);
     }

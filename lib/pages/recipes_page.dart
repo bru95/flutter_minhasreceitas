@@ -9,6 +9,7 @@ import 'package:minhasreceitas/widgets/platform_widget.dart';
 
 class Recipes extends StatefulWidget {
   static const String title = 'Minhas Receitas';
+  static const routeName = '/recipes';
 
   @override
   _RecipesState createState() => _RecipesState();
@@ -22,37 +23,6 @@ class _RecipesState extends State<Recipes> {
     controller = RecipesController();
 
     controller.getData();
-  }
-
-  Widget _buildAndroidPage(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Recipes.title),
-      ),
-      body: SafeArea(
-        child: Text('Receitas'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openNewRecipe,
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-
-  Widget _buildIosPage(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(Recipes.title),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: Icon(CupertinoIcons.add),
-          onPressed: _openNewRecipe,
-        ),
-      ),
-      child: SafeArea(
-        child: Text("Receitas"),
-      ),
-    );
   }
 
   @override
@@ -91,30 +61,36 @@ class _RecipesState extends State<Recipes> {
   }
 
   _openNewRecipe() {
-    Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute(builder: (context) => NewRecipe()),
-    );
+    Navigator.of(context, rootNavigator: true).pushNamed(NewRecipe.routeName);
+  }
+
+  _openEditRecipe(Recipe recipe) {
+    Navigator.of(context, rootNavigator: true)
+        .pushNamed(NewRecipe.routeName, arguments: recipe);
   }
 
   Widget _listBuilder(BuildContext context, int index) {
     return SafeArea(
       top: false,
       bottom: false,
-      child: Card(
-        elevation: 1.5,
-        margin: EdgeInsets.fromLTRB(6, 0, 6, 0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: GestureDetector(
-          onTap: () {},
+      child: GestureDetector(
+        onTap: () {
+          _openEditRecipe(controller.recipes[index]);
+        },
+        child: Card(
+          elevation: 1.5,
+          margin: EdgeInsets.fromLTRB(6, 0, 6, 0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 PlatformIconButton(
-                  icon: controller.recipes[index].favorite != null && controller.recipes[index].favorite
+                  icon: controller.recipes[index].favorite != null &&
+                          controller.recipes[index].favorite
                       ? Icon(
                           PlatformIcons(context).favoriteSolid,
                           color: Color(0xFFB22222),
@@ -125,7 +101,7 @@ class _RecipesState extends State<Recipes> {
                         ),
                   padding: EdgeInsets.zero,
                   onPressed: () {
-                    print("Favoritar");
+                    controller.favorite(index);
                   },
                 ),
                 Padding(padding: EdgeInsets.only(left: 16)),

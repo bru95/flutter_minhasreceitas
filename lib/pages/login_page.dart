@@ -8,6 +8,8 @@ import 'package:minhasreceitas/home.dart';
 import 'package:mobx/mobx.dart';
 
 class Login extends StatefulWidget {
+  static const routeName = '/login';
+
   @override
   _LoginState createState() => _LoginState();
 }
@@ -24,8 +26,7 @@ class _LoginState extends State<Login> {
         reaction<bool>((_) => controller.errorState.error, _displayFlushBar));
 
     _disposers.add(when((_) => controller.isLoggedin, () {
-      Navigator.pushReplacement(
-          context, CupertinoPageRoute(builder: (context) => Home()));
+      Navigator.pushReplacementNamed(context, Home.routeName);
     }));
 
     super.initState();

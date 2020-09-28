@@ -5,11 +5,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:minhasreceitas/controllers/new_recipe_controller.dart';
-import 'package:minhasreceitas/widgets/util_widgets.dart';
+import 'package:minhasreceitas/model/recipe.dart';
 import 'package:mobx/mobx.dart';
 
 class NewRecipe extends StatefulWidget {
   static const String title = 'Nova Receita';
+  static const routeName = '/new_recipe';
 
   @override
   _NewRecipeState createState() => _NewRecipeState();
@@ -19,6 +20,9 @@ class _NewRecipeState extends State<NewRecipe> {
   NewRecipeController controller;
   final List<ReactionDisposer> _disposers = [];
 
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController preparationController = new TextEditingController();
+
   @override
   void initState() {
     controller = NewRecipeController();
@@ -26,7 +30,21 @@ class _NewRecipeState extends State<NewRecipe> {
     _disposers.add(
         reaction<bool>((_) => controller.errorState.error, _displayFlushBar));
 
+    _disposers.add(
+        reaction<Recipe>((_) => controller.recipe, _updateTextControllers));
+
+    _disposers.add(when((_) => controller.success, () {
+      _showDialogSucces();
+    }));
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    final arg = ModalRoute.of(context).settings.arguments;
+    print(arg);
+    super.didChangeDependencies();
   }
 
   void _displayFlushBar(bool error) {
@@ -40,16 +58,40 @@ class _NewRecipeState extends State<NewRecipe> {
     }
   }
 
+  void _updateTextControllers(Recipe data) {
+    nameController.text = data.name;
+    preparationController.text = data.preparation;
+  }
+
   @override
   Widget build(context) {
+    Recipe recipe = ModalRoute.of(context).settings.arguments;
+    if (recipe != null) {
+      controller.setRecipe(recipe);
+    }
+
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text(NewRecipe.title),
         cupertino: (context, platform) => CupertinoNavigationBarData(
-            trailing: CupertinoButton(
-          child: Text("Salvar"),
-          padding: EdgeInsets.all(0.0),
-          onPressed: controller.addRecipe,
+            trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            CupertinoButton(
+              child: Icon(
+                CupertinoIcons.delete_solid,
+              ),
+              padding: EdgeInsets.all(0.0),
+              onPressed: controller.deleteRecipe,
+            ),
+            CupertinoButton(
+              child: Icon(
+                CupertinoIcons.check_mark_circled_solid,
+              ),
+              padding: EdgeInsets.all(0.0),
+              onPressed: controller.addRecipe,
+            ),
+          ],
         )),
       ),
       body: SingleChildScrollView(
@@ -73,6 +115,7 @@ class _NewRecipeState extends State<NewRecipe> {
                   child: Padding(
                     padding: EdgeInsets.all(10),
                     child: PlatformTextField(
+                      controller: nameController,
                       onChanged: controller.changeName,
                       maxLines: null,
                       material: (context, platform) => MaterialTextFieldData(
@@ -155,6 +198,7 @@ class _NewRecipeState extends State<NewRecipe> {
                   child: Padding(
                     padding: EdgeInsets.all(10),
                     child: PlatformTextField(
+                      controller: preparationController,
                       onChanged: controller.changePreparation,
                       maxLines: null,
                       material: (context, platform) => MaterialTextFieldData(
@@ -170,14 +214,27 @@ class _NewRecipeState extends State<NewRecipe> {
                   child: !Platform.isIOS
                       ? Padding(
                           padding: EdgeInsets.all(15),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: RaisedButton(
-                              child: Text("Salvar"),
-                              onPressed: controller.addRecipe,
-                              color: Colors.green,
-                              textColor: Colors.white,
-                            ),
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                width: double.infinity,
+                                child: RaisedButton(
+                                  child: Text("Salvar"),
+                                  onPressed: controller.addRecipe,
+                                  color: Colors.green,
+                                  textColor: Colors.white,
+                                ),
+                              ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: RaisedButton(
+                                  child: Text("Excluir"),
+                                  onPressed: controller.deleteRecipe,
+                                  color: Colors.redAccent,
+                                  textColor: Colors.white,
+                                ),
+                              )
+                            ],
                           ),
                         )
                       : null,
@@ -228,60 +285,82 @@ class _NewRecipeState extends State<NewRecipe> {
   }
 
   Widget _DialogWithTextField(context, platform) => SingleChildScrollView(
-    child: Container (
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      child: SafeArea(
         child: Container(
-          height: 220,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(12)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 15),
-                child: Text(
-                  "NOVO INGREDIENTE",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 17,
-                  ),
-                ),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: SafeArea(
+            child: Container(
+              height: 220,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(12)),
               ),
-              Padding(
-                  padding:
-                  EdgeInsets.only(top: 10, bottom: 10, right: 15, left: 15),
-                  child: PlatformTextField(
-                    onChanged: (value) => controller.auxNewIngredient = value,
-                    maxLines: 1,
-                  )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  PlatformButton(
-                    child: Text("Cancelar"),
-                    onPressed: () => {
-                      Navigator.of(context, rootNavigator: true).pop("Discard")
-                    },
+                  Padding(
+                    padding: EdgeInsets.only(top: 15),
+                    child: Text(
+                      "NOVO INGREDIENTE",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
+                    ),
                   ),
-                  PlatformButton(
-                    child: Text("Salvar"),
-                    onPressed: () {
-                      controller.addIngredient();
-                      Navigator.of(context, rootNavigator: true).pop("Discard");
-                    },
+                  Padding(
+                      padding: EdgeInsets.only(
+                          top: 10, bottom: 10, right: 15, left: 15),
+                      child: PlatformTextField(
+                        onChanged: (value) =>
+                            controller.auxNewIngredient = value,
+                        maxLines: 1,
+                      )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      PlatformButton(
+                        child: Text("Cancelar"),
+                        onPressed: () => {
+                          Navigator.of(context, rootNavigator: true)
+                              .pop("Discard")
+                        },
+                      ),
+                      PlatformButton(
+                        child: Text("Salvar"),
+                        onPressed: () {
+                          controller.addIngredient();
+                          Navigator.of(context, rootNavigator: true)
+                              .pop("Discard");
+                        },
+                      )
+                    ],
                   )
                 ],
-              )
-            ],
+              ),
+            ),
           ),
         ),
+      );
+
+  _showDialogSucces() async {
+    await showPlatformDialog(
+      context: context,
+      builder: (_) => PlatformAlertDialog(
+        title: Text('Sucesso!'),
+        content: Text('Operação realizada com sucesso!'),
+        actions: <Widget>[
+          PlatformDialogAction(
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
-    ),
-  );
+    ).then((value) => Navigator.pop(context));
+  }
 }

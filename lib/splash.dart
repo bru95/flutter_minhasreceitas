@@ -21,11 +21,9 @@ class _SplashState extends State<Splash> {
       Future.delayed(Duration(seconds: 2)).then((_) {
         var sharedPreferences = locator<LocalStorageService>();
         if (sharedPreferences.usrLogged != null) {
-          Navigator.pushReplacement(
-              context, CupertinoPageRoute(builder: (context) => Home()));
+          Navigator.pushReplacementNamed(context, Home.routeName);
         } else {
-          Navigator.pushReplacement(
-              context, CupertinoPageRoute(builder: (context) => Login()));
+          Navigator.pushReplacementNamed(context, Login.routeName);
         }
       });
     });

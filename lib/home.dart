@@ -6,6 +6,8 @@ import 'package:minhasreceitas/pages/settings_page.dart';
 import 'package:minhasreceitas/widgets/platform_widget.dart';
 
 class Home extends StatefulWidget {
+  static const routeName = '/home';
+
   @override
   _HomeState createState() => _HomeState();
 }

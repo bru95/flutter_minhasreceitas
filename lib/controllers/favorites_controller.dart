@@ -4,11 +4,11 @@ import 'package:minhasreceitas/service_locator.dart';
 import 'package:minhasreceitas/services/firebase_service.dart';
 import 'package:mobx/mobx.dart';
 
-part 'recipes_controller.g.dart';
+part 'favorites_controller.g.dart';
 
-class RecipesController = RecipesControllerBase with _$RecipesController;
+class FavoritesController = FavoritesControllerBase with _$FavoritesController;
 
-abstract class RecipesControllerBase with Store {
+abstract class FavoritesControllerBase with Store {
   FirebaseService _api = locator<FirebaseService>();
 
   @observable
@@ -16,7 +16,7 @@ abstract class RecipesControllerBase with Store {
 
   @action
   void getData() {
-    _api.streamDataCollection().listen((QuerySnapshot snapshot) {
+    _api.streamDataCollectionFavorites().listen((QuerySnapshot snapshot) {
       List<Recipe> firebaseRecipes = new List<Recipe>();
       snapshot.docs
           .forEach((f) => firebaseRecipes.add(Recipe.fromfirestoresnapshot(f)));
@@ -24,14 +24,8 @@ abstract class RecipesControllerBase with Store {
     });
   }
 
-  void favorite(int index) {
-    recipes[index].favorite =
-        recipes[index].favorite != null ? !recipes[index].favorite : true;
-
-    _api
-        .updateDocument(recipes[index].toMap(), recipes[index].documentId())
-        .then((_) {
-      print("success");
-    });
+  void disfavor(int index) {
+    recipes[index].favorite = false;
+    _api.updateDocument(recipes[index].toMap(), recipes[index].documentId());
   }
 }

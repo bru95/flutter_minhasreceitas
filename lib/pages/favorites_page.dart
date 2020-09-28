@@ -1,42 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:minhasreceitas/widgets/platform_widget.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:minhasreceitas/controllers/favorites_controller.dart';
 
 class Favorites extends StatefulWidget {
   static const String title = 'Receitas Favoritas';
+  static const routeName = '/favorites';
 
   @override
   _FavoritesState createState() => _FavoritesState();
 }
 
 class _FavoritesState extends State<Favorites> {
-  static const _itemsLength = 3;
-
-  List<Color> colors;
-  List<String> titles;
-  List<String> contents;
+  FavoritesController controller;
 
   @override
   void initState() {
-    colors = [Color(0xFFE9E9E9), Color(0xFFE9E9E9), Color(0xFFE9E9E9)];
-    titles = ["Um", "Dois", "Três"];
-    contents = ["Primeiro card", "Segundo card", "Terceiro card"];
+    controller = FavoritesController();
+    controller.getData();
     super.initState();
   }
 
-  Widget _buildAndroidPage(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(Favorites.title),
-      ),
-      body: ListView.builder(itemBuilder: _listBuilder),
-    );
-  }
-
   Widget _listBuilder(BuildContext context, int index) {
-    if (index >= _itemsLength) return null;
-    print(index);
-
     return SafeArea(
       top: false,
       bottom: false,
@@ -53,32 +39,32 @@ class _FavoritesState extends State<Favorites> {
           child: Padding(
             padding: const EdgeInsets.all(12.0),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  backgroundColor: colors[index],
-                  child: Text(
-                    titles[index].substring(0, 1),
-                    style: TextStyle(color: Colors.white),
+                PlatformIconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(
+                    PlatformIcons(context).heartSolid,
+                    color: Color(0xFFB22222),
                   ),
+                  onPressed: () {
+                    controller.disfavor(index);
+                  },
                 ),
-                //Icon(PlatformIcons(context).heartSolid, color: Color(0xFFB22222),),
                 Padding(padding: EdgeInsets.only(left: 16)),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        titles[index],
+                        controller.recipes[index].name,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       Padding(padding: EdgeInsets.only(top: 8)),
-                      Text(
-                        contents[index],
-                      ),
                     ],
                   ),
                 ),
@@ -90,22 +76,42 @@ class _FavoritesState extends State<Favorites> {
     );
   }
 
-  Widget _buildIosPage(BuildContext context) {
-    return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(),
-        child: SafeArea(
-          child: ListView.builder(
-            itemBuilder: _listBuilder,
-          ),
-        ),
-    );
-  }
-
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroidPage,
-      iosBuilder: _buildIosPage,
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
+          title: Text(
+        Favorites.title,
+      )),
+      body: SafeArea(
+        child: Observer(
+          builder: (_) => controller.recipes.length > 0
+              ? ListView.separated(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemCount: controller.recipes.length,
+                  itemBuilder: _listBuilder,
+                  separatorBuilder: (context, index) => Divider(
+                    color: Color(0xFFE9E9E9),
+                  ),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      child: Icon(
+                        Icons.mood_bad,
+                        size: 150,
+                      ),
+                    ),
+                    Center(
+                        child:
+                            Text("Você ainda não possui receitas favoritas!"))
+                  ],
+                ),
+        ),
+      ),
     );
   }
 }

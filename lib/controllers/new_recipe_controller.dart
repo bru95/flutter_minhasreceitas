@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:minhasreceitas/controllers/error_controller.dart';
 import 'package:minhasreceitas/model/recipe.dart';
 import 'package:minhasreceitas/service_locator.dart';
-import 'package:minhasreceitas/services/localstorage_service.dart';
+import 'package:minhasreceitas/services/firebase_service.dart';
 import 'package:mobx/mobx.dart';
 
 part 'new_recipe_controller.g.dart';
@@ -10,11 +11,16 @@ part 'new_recipe_controller.g.dart';
 class NewRecipeController = NewRecipeControllerBase with _$NewRecipeController;
 
 abstract class NewRecipeControllerBase with Store {
+  FirebaseService _api = locator<FirebaseService>();
+
   @observable
   Recipe _recipe = new Recipe(name: '', preparation: '', ingredients: []);
 
   @observable
   String auxNewIngredient = "";
+
+  @observable
+  bool success = false;
 
   @observable
   ErrorState errorState = ErrorState();
@@ -29,41 +35,43 @@ abstract class NewRecipeControllerBase with Store {
     return _recipe.ingredients;
   }
 
+  @computed
+  Recipe get recipe {
+    return _recipe;
+  }
+
   @action
   addIngredient() {
     List<String> ingredients = _recipe.ingredients;
     ingredients.insert(0, auxNewIngredient);
     auxNewIngredient = '';
-    _recipe = Recipe(
-        name: _recipe.name,
-        preparation: _recipe.preparation,
-        ingredients: ingredients);
+
+    Recipe aux = _recipe;
+    aux.ingredients = ingredients;
+    _recipe = aux;
   }
 
   @action
   changePreparation(String preparation) {
-    _recipe = Recipe(
-        name: _recipe.name,
-        preparation: preparation,
-        ingredients: _recipe.ingredients);
+    Recipe aux = _recipe;
+    aux.preparation = preparation;
+    _recipe = aux;
   }
 
   @action
   changeName(String name) {
-    _recipe = Recipe(
-        name: name,
-        preparation: _recipe.preparation,
-        ingredients: _recipe.ingredients);
+    Recipe aux = _recipe;
+    aux.name = name;
+    _recipe = aux;
   }
 
   @action
   removeIngredient(int index) {
     List<String> ingredients = _recipe.ingredients;
     ingredients.removeAt(index);
-    _recipe = Recipe(
-        name: _recipe.name,
-        preparation: _recipe.preparation,
-        ingredients: ingredients);
+    Recipe aux = _recipe;
+    aux.ingredients = ingredients;
+    _recipe = aux;
   }
 
   @action
@@ -75,15 +83,42 @@ abstract class NewRecipeControllerBase with Store {
       errorState.message = 'Preencha todos os campos';
       errorState.error = true;
     } else if (_recipe.documentId() != null) {
-      //update
+      _api.updateDocument(_recipe.toMap(), _recipe.documentId()).then((result) {
+        success = true;
+      }).catchError((error) {
+        errorState.title = 'Atenção';
+        errorState.message = error.toString();
+        errorState.error = true;
+      });
     } else {
-      var sharedPreferences = locator<LocalStorageService>();
-      var userId = sharedPreferences.usrLogged;
-
-      FirebaseFirestore databaseReference = FirebaseFirestore.instance;
       DocumentReference ref =
-          await databaseReference.collection(userId).add(_recipe.toMap());
-      print(ref.id);
+          await _api.addDocument(_recipe.toMap()).then((result) {
+        success = true;
+      }).catchError((error) {
+        errorState.title = 'Atenção';
+        errorState.message = error.toString();
+        errorState.error = true;
+      });
     }
+  }
+
+  @action
+  deleteRecipe() async {
+    if (_recipe.documentId() != null) {
+      _api.removeDocument(recipe.documentId()).then((result) {
+        success = true;
+      }).catchError((error) {
+        errorState.title = 'Atenção';
+        errorState.message = error.toString();
+        errorState.error = true;
+      });
+    } else {
+      success = true;
+    }
+  }
+
+  @action
+  setRecipe(Recipe recipe) {
+    _recipe = recipe;
   }
 }
