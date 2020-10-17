@@ -41,6 +41,7 @@ class _RecipesState extends State<Recipes> {
           floatingActionButton: FloatingActionButton(
         onPressed: _openNewRecipe,
         child: Icon(Icons.add),
+        backgroundColor: Color(0xFF4682B4),
       )),
       body: SafeArea(
         child: Container(

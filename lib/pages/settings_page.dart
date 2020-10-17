@@ -66,16 +66,27 @@ class _SettingsState extends State<Settings> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(PlatformIcons(context).personSolid, size: 150,),
+                Icon(
+                  PlatformIcons(context).personSolid,
+                  size: 150,
+                ),
               ],
             ),
             Padding(padding: EdgeInsets.only(top: 20, left: 10)),
             PlatformButton(
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.exit_to_app, color: Color(0xFFB22222),),
-                  Padding(padding: EdgeInsets.only(right: 10),),
-                  Text("Sair", style: TextStyle(color: Color(0xFFB22222)),),
+                  Icon(
+                    Icons.exit_to_app,
+                    color: Color(0xFFB22222),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(right: 10),
+                  ),
+                  Text(
+                    "Sair",
+                    style: TextStyle(color: Color(0xFFB22222)),
+                  ),
                 ],
               ),
               onPressed: controller.logoutApp,

@@ -218,6 +218,7 @@ class _NewRecipeState extends State<NewRecipe> {
                             children: <Widget>[
                               SizedBox(
                                 width: double.infinity,
+                                height: 50,
                                 child: RaisedButton(
                                   child: Text("Salvar"),
                                   onPressed: controller.addRecipe,
@@ -225,8 +226,10 @@ class _NewRecipeState extends State<NewRecipe> {
                                   textColor: Colors.white,
                                 ),
                               ),
+                              Padding(padding: EdgeInsets.all(8)),
                               SizedBox(
                                 width: double.infinity,
+                                height: 50,
                                 child: RaisedButton(
                                   child: Text("Excluir"),
                                   onPressed: controller.deleteRecipe,
@@ -274,77 +277,71 @@ class _NewRecipeState extends State<NewRecipe> {
   }
 
   _displayDialogIngredient() {
-    return showPlatformModalSheet(
-      androidIsScrollControlled: true,
-      context: context,
-      builder: (_) => PlatformWidget(
-        material: _DialogWithTextField,
-        cupertino: _DialogWithTextField,
-      ),
-    );
-  }
-
-  Widget _DialogWithTextField(context, platform) => SingleChildScrollView(
-        child: Container(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: SafeArea(
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0)), //this right here
             child: Container(
-              height: 220,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.all(Radius.circular(12)),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 15),
-                    child: Text(
-                      "NOVO INGREDIENTE",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                      padding: EdgeInsets.only(
-                          top: 10, bottom: 10, right: 15, left: 15),
-                      child: PlatformTextField(
-                        onChanged: (value) =>
-                            controller.auxNewIngredient = value,
-                        maxLines: 1,
-                      )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      PlatformButton(
-                        child: Text("Cancelar"),
-                        onPressed: () => {
-                          Navigator.of(context, rootNavigator: true)
-                              .pop("Discard")
-                        },
-                      ),
-                      PlatformButton(
-                        child: Text("Salvar"),
+              height: 250,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("NOVO INGREDIENTE",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
+                        child: TextField(
+                          onChanged: (value) =>
+                              controller.auxNewIngredient = value,
+                          decoration: InputDecoration(
+                              hintText: 'Descrição do ingrediente'),
+                        )),
+                    SizedBox(
+                      width: 320.0,
+                      child: RaisedButton(
                         onPressed: () {
                           controller.addIngredient();
                           Navigator.of(context, rootNavigator: true)
                               .pop("Discard");
                         },
-                      )
-                    ],
-                  )
-                ],
+                        child: Text(
+                          "Salvar",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: const Color(0xFF4682B4),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 320.0,
+                      child: RaisedButton(
+                        onPressed: () => {
+                          Navigator.of(context, rootNavigator: true)
+                              .pop("Discard")
+                        },
+                        child: Text(
+                          "Cancelar",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        color: const Color(0xFFF5F5F5),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
-      );
+          );
+        });
+  }
 
   _showDialogSucces() async {
     await showPlatformDialog(

@@ -33,7 +33,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Minhas Receitas',
       material: (context, platform) => MaterialAppData(
-          theme: ThemeData(scaffoldBackgroundColor: Color(0xFFF5F5F5))),
+          theme: ThemeData(
+              scaffoldBackgroundColor: Color(0xFFF5F5F5),
+              primaryColor: Color(0xFF4682B4))),
       cupertino: (context, platform) => CupertinoAppData(
           theme:
               CupertinoThemeData(scaffoldBackgroundColor: Color(0xFFF5F5F5))),

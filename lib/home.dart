@@ -26,15 +26,15 @@ class _HomeState extends State<Home> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.favorite),
-              title: Text(Favorites.title),
+              label: Favorites.title,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Text(Recipes.title),
+              label: Recipes.title,
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
-              title: Text(Settings.title),
+              label: Settings.title,
             ),
           ],
           currentIndex: _selectedIndex,
@@ -54,11 +54,11 @@ class _HomeState extends State<Home> {
       tabBar: CupertinoTabBar(
         items: [
           BottomNavigationBarItem(
-              title: Text(Favorites.title), icon: Icon(CupertinoIcons.heart)),
+              label: Favorites.title, icon: Icon(CupertinoIcons.heart)),
           BottomNavigationBarItem(
-              title: Text(Recipes.title), icon: Icon(CupertinoIcons.book)),
+              label: Recipes.title, icon: Icon(CupertinoIcons.book)),
           BottomNavigationBarItem(
-              title: Text(Settings.title), icon: Icon(CupertinoIcons.settings)),
+              label: Settings.title, icon: Icon(CupertinoIcons.settings)),
         ],
         currentIndex: 1,
       ),
