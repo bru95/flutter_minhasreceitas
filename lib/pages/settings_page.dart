@@ -5,6 +5,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:minhasreceitas/controllers/settings_controller.dart';
 import 'package:minhasreceitas/pages/login_page.dart';
 import 'package:mobx/mobx.dart';
+import 'package:minhasreceitas/service_locator.dart';
+import 'package:minhasreceitas/services/localstorage_service.dart';
+import 'dart:convert';
 
 class Settings extends StatefulWidget {
   static const String title = 'Configurações';
@@ -53,6 +56,9 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(context) {
+    var sharedPreferences = locator<LocalStorageService>();
+    var user = json.decode(sharedPreferences.usrLogged);
+
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Text(Settings.title),
@@ -72,6 +78,7 @@ class _SettingsState extends State<Settings> {
                 ),
               ],
             ),
+            Text(user['email']),
             Padding(padding: EdgeInsets.only(top: 20, left: 10)),
             PlatformButton(
               child: Row(
@@ -90,6 +97,7 @@ class _SettingsState extends State<Settings> {
                 ],
               ),
               onPressed: controller.logoutApp,
+              color: Colors.white,
             )
           ],
         ),

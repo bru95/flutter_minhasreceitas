@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:minhasreceitas/service_locator.dart';
 import 'package:minhasreceitas/services/localstorage_service.dart';
+import 'dart:convert';
 
 class FirebaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -13,12 +14,21 @@ class FirebaseService {
 
   Stream<QuerySnapshot> streamDataCollection() {
     var sharedPreferences = locator<LocalStorageService>();
-    return ref.orderBy("name").where("userId", isEqualTo: sharedPreferences.usrLogged).snapshots();
+    var user = json.decode(sharedPreferences.usrLogged);
+    return ref
+        .orderBy("name")
+        .where("userId", isEqualTo: user['uid'])
+        .snapshots();
   }
 
   Stream<QuerySnapshot> streamDataCollectionFavorites() {
     var sharedPreferences = locator<LocalStorageService>();
-    return ref.orderBy("name").where("userId", isEqualTo: sharedPreferences.usrLogged).where("favorite", isEqualTo: true).snapshots();
+    var user = json.decode(sharedPreferences.usrLogged);
+    return ref
+        .orderBy("name")
+        .where("userId", isEqualTo: user['uid'])
+        .where("favorite", isEqualTo: true)
+        .snapshots();
   }
 
   Future<DocumentSnapshot> getDocumentById(String id) {

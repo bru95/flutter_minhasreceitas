@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:minhasreceitas/model/base_model.dart';
 import 'package:minhasreceitas/service_locator.dart';
 import 'package:minhasreceitas/services/localstorage_service.dart';
+import 'dart:convert';
 
-class Recipe extends BaseModel{
+class Recipe extends BaseModel {
   String _documentId;
   String _userId;
   String name;
@@ -11,9 +12,10 @@ class Recipe extends BaseModel{
   bool favorite = false;
   List<String> ingredients = new List<String>();
 
-  Recipe({this.name, this.preparation, this.ingredients}){
+  Recipe({this.name, this.preparation, this.ingredients}) {
     var sharedPreferences = locator<LocalStorageService>();
-    this._userId = sharedPreferences.usrLogged;
+    var user = json.decode(sharedPreferences.usrLogged);
+    this._userId = user['uid'];
   }
 
   Recipe.fromfirestoresnapshot(DocumentSnapshot document) {
@@ -53,4 +55,3 @@ class Recipe extends BaseModel{
 
   set setFavorite(bool value) => favorite = value;
 }
-

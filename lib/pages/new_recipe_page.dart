@@ -309,17 +309,16 @@ class _NewRecipeState extends State<NewRecipe> {
                     SizedBox(
                       width: 320.0,
                       child: RaisedButton(
-                        onPressed: () {
-                          controller.addIngredient();
-                          Navigator.of(context, rootNavigator: true)
-                              .pop("Discard");
-                        },
-                        child: Text(
-                          "Salvar",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        color: const Color(0xFF4682B4),
-                      ),
+                          onPressed: () {
+                            controller.addIngredient();
+                            Navigator.of(context, rootNavigator: true)
+                                .pop("Discard");
+                          },
+                          child: Text(
+                            "Adicionar",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          color: Colors.green),
                     ),
                     SizedBox(
                       width: 320.0,

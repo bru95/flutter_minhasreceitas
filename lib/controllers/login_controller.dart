@@ -47,8 +47,9 @@ abstract class LoginControllerBase with Store {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password);
-        if (userCredential != null) {
-          setUserLogged(userCredential);
+        User user = userCredential.user;
+        if (user != null) {
+          setUserLogged(user);
         } else {
           errorState.title = 'Desculpe';
           errorState.message = 'Ocorreu um erro, por favor tente novamente';
@@ -82,9 +83,9 @@ abstract class LoginControllerBase with Store {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
-
-        if (userCredential != null) {
-          setUserLogged(userCredential);
+        User user = userCredential.user;
+        if (user != null) {
+          setUserLogged(user);
         } else {
           errorState.title = 'Atenção';
           errorState.message = 'Ocorreu um erro, por favor tente novamente';
@@ -108,10 +109,11 @@ abstract class LoginControllerBase with Store {
     isLoading = false;
   }
 
-  void setUserLogged(UserCredential userCredential) {
+  void setUserLogged(User user) {
+    var str = '{"uid": "${user.uid}", "email": "${user.email}"}';
     var sharedPreferences = locator<LocalStorageService>();
-    sharedPreferences.usrLogged = userCredential.user.uid;
+    sharedPreferences.usrLogged = str;
 
-    isLoggedin= true;
+    isLoggedin = true;
   }
 }
